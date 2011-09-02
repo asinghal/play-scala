@@ -24,7 +24,7 @@ import play.templates.TemplateLoader
  */
 trait EmailNotifier extends LocalVariablesSupport {
 
-  var notifications = new ThreadLocal[EmailNotificationContext]
+  val notifications = new ThreadLocal[EmailNotificationContext]
 
   /**
    * Sets a subject for this email. It enables formatting of the providing string using Java's
@@ -223,11 +223,7 @@ trait EmailNotifier extends LocalVariablesSupport {
    */
   private def ensureContentTypeDefined(bodyHtml: String) = {
     if (current.contentType == null) {
-      if (bodyHtml != null) {
-        current.contentType = "text/html";
-      } else {
-        current.contentType = "text/plain";
-      }
+      current.contentType = if (bodyHtml != null) "text/html" else "text/plain"
     }
   }
 
@@ -300,7 +296,7 @@ class EmailNotificationContext {
     for (field <- fields) {
       val ann = field.getAnnotation(classOf[Required])
       if (ann != null) {
-        var access = field.isAccessible
+        val access = field.isAccessible
         field.setAccessible(true)
         val value = field.get(this)
         field.setAccessible(access)
@@ -309,7 +305,7 @@ class EmailNotificationContext {
         }
 
         if (classOf[Seq[_]].isAssignableFrom(field.getType)) {
-          var s = value.asInstanceOf[Seq[_]]
+          val s = value.asInstanceOf[Seq[_]]
           if (s.size == 0) {
             throw new MailException(field.getName + " is required (but not provided).")
           }
