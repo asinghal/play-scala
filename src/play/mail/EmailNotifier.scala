@@ -242,7 +242,7 @@ trait EmailNotifier extends LocalVariablesSupport {
       body = template.render(templateBinding)
     } catch {
       case e: TemplateNotFoundException =>
-        if (current.contentType != null && current.contentType != contentType) {
+        if (current.contentType != null && current.contentType == contentType) {
           throw e;
         }
     }
