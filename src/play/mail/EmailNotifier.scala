@@ -129,19 +129,16 @@ trait EmailNotifier extends LocalVariablesSupport {
    * @param args : Any arguments that must be bound to the template to generate the email body.
    * @return
    */
-  def send(templateName: String, args: AnyRef*): Future[java.lang.Boolean] = {
+  def send(templateName: String, args: (String, AnyRef)*): Future[java.lang.Boolean] = {
 
     current.validate
 
     var templateHtmlBinding = new java.util.HashMap[String, Object]()
     var templateTextBinding = new java.util.HashMap[String, Object]()
 
-    for (o <- args) {
-      var names = LocalVariablesNamesTracer.getAllLocalVariableNames(o).toList
-      for (name <- names) {
+    for ((name, o) <- args) {
         templateHtmlBinding += (name -> o)
         templateTextBinding += (name -> o)
-      }
     }
 
     val bodyHtml: String = getBody(templateName + ".html", templateHtmlBinding, current.contentType)
